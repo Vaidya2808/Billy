@@ -26,6 +26,13 @@ app.use('/products', productRoutes);
 app.use('/getUsers', getUserRoute)
 app.use('/getProductsByCategory', getProdByCat);
 
+
+app.get('*' , (req, res, next) => {
+    res.send({
+        "message" : "Hemlo"
+    });
+});
+
 // app.use((req, res, next) => {
 //     const error = new Error('Not found');
 //     error.status = 404;

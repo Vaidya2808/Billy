@@ -1,6 +1,7 @@
 {
     "env" : {
         "MONGO_ATLAS_PW" : "Abhimanyu",
-        "JWT_KEY" : "secret"
+        "JWT_KEY" : "secret",
+        "PORT" : "3000"
     }
 }
