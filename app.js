@@ -18,13 +18,11 @@ mongoose.Promise = global.Promise;
 
 const userRoute = require('./api/routes/user');
 const productRoutes = require('./api/routes/product');
-const getUserRoute = require('./api/routes/getUser');
-const getProdByCat = require('./api/routes/getByCategory');
+const onlineOrderRoute = require('./api/routes/onlineOrder');
 
 app.use('/user', userRoute);
 app.use('/products', productRoutes); 
-app.use('/getUsers', getUserRoute)
-app.use('/getProductsByCategory', getProdByCat);
+app.use('/onlineOrder', onlineOrderRoute);
 
 
 app.get('*' , (req, res, next) => {

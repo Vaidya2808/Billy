@@ -1,115 +1,266 @@
-const express= require('express');
+const express = require("express");
 const router = express.Router();
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const Product = require('../models/product');
+const Product = require("../models/product");
+const User = require("../models/user");
 
-// Get all products
-router.get('/', (req, res, next) => {
-    Product.find()
+// Get all products sold by retailers
+router.get("/retailer", (req, res, next) => {
+  Product.find({
+      userType : "retailer"
+  })
     .exec()
-    .then(docs => {
-        console.log(docs);
-        if(docs.length == 0)
-        {
-            res.status(200).json({
-                message : 'Empty Database'
-            });
-        }
-        else
-        {
-            const response = {
-                count : docs.length,
-                products: docs.map(doc => {
-                    return {
-                        name: doc.name,
-                        price: doc.price,
-                        _id: doc._id,
-                        userId : doc.userId,
-                        userType : doc.userType,
-                        category : doc.category,
-                        quantity : doc.quantity,
-                        date : doc.date,
-                        request: {
-                            type: 'GET',
-                            url: "http://localhost:3000/products/" + doc._id
-                        }
-                 }
-             })
-            }   
-            res.status(200).json(response);
-        }
+    .then((docs) => {
+      console.log(docs);
+      if (docs.length == 0) {
+        res.status(200).json({
+          message: "Empty Database",
+        });
+      } else {
+        const response = {
+          count: docs.length,
+          products: docs.map((doc) => {
+            return {
+              name: doc.name,
+              price: doc.price,
+              _id: doc._id,
+              userId: doc.userId,
+              userType: doc.userType,
+              category: doc.category,
+              quantity: doc.quantity,
+              date: doc.date,
+            };
+          }),
+        };
+        res.status(200).json(response);
+      }
     })
-    .catch(err =>{
-    console.log(err);
-    res.status(500).json({
-        error : err
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
     });
+});
+
+// Get all products sold by retailers
+router.get("/wholesaler", (req, res, next) => {
+  Product.find({
+      userType : "wholesaler"
+  })
+    .exec()
+    .then((docs) => {
+      console.log(docs);
+      if (docs.length == 0) {
+        res.status(200).json({
+          message: "Empty Database",
+        });
+      } else {
+        const response = {
+          count: docs.length,
+          products: docs.map((doc) => {
+            return {
+              name: doc.name,
+              price: doc.price,
+              _id: doc._id,
+              userId: doc.userId,
+              userType: doc.userType,
+              category: doc.category,
+              quantity: doc.quantity,
+              date: doc.date,
+            };
+          }),
+        };
+        res.status(200).json(response);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
+
+// get products by category by retailers
+router.get("/retailer/category/:cat", (req, res, next) => {
+  const cat = req.params.cat;
+  Product.find({
+    category: cat,
+    userType: "retailer",
+  })
+    .exec()
+    .then((docs) => {
+      console.log(docs);
+      if (docs.length == 0) {
+        res.status(200).json({
+          message: "Category Unavailable",
+        });
+      } else {
+        const response = {
+          count: docs.length,
+          product: docs.map((doc) => {
+            return {
+              name: doc.name,
+              price: doc.price,
+              _id: doc._id,
+              userId: doc._id,
+              quantity: doc._id,
+              date: doc.date,
+            };
+          }),
+        };
+
+        res.status(200).json(response);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
+
+// get products by category by wholesaler
+router.get("/wholesaler/category/:cat", (req, res, next) => {
+  const cat = req.params.cat;
+  Product.find({
+    category: cat,
+    userType: "wholesaler",
+  })
+    .exec()
+    .then((docs) => {
+      console.log(docs);
+      if (docs.length == 0) {
+        res.status(200).json({
+          message: "Category Unavailable",
+        });
+      } else {
+        const response = {
+          count: docs.length,
+          product: docs.map((doc) => {
+            return {
+              name: doc.name,
+              price: doc.price,
+              _id: doc._id,
+              userId: doc._id,
+              quantity: doc._id,
+              date: doc.date,
+            };
+          }),
+        };
+
+        res.status(200).json(response);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
+
+// Products sold by a particular shop
+router.get("/ofShop/:shopId", (req, res, next) => {
+  const Id = req.params.shopId;
+  Product.find({
+    userId: Id,
+  })
+    .exec()
+    .then((docs) => {
+      console.log(docs);
+      if (docs.length == 0) {
+        res.status(200).json({
+          message: "Shop currently closed",
+        });
+      } else {
+        const response = {
+          count: docs.length,
+          product: docs.map((doc) => {
+            return {
+              name: doc.name,
+              price: doc.price,
+              _id: doc._id,
+              quantity: doc.quantity,
+              date: doc.date,
+            };
+          }),
+        };
+        console.log(response);
+        res.status(200).json(response);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
     });
 });
 
 // get data of a particular product
-router.get('/:id', (req, res, next) => {
-    const id = req.params.id;
-    Product.findById(id)
+router.get("/:id", (req, res, next) => {
+  const id = req.params.id;
+  Product.findById(id)
     .select("name price quantity category date")
     .exec()
-    .then(doc => {
-        console.log(doc);
-        if(doc)
-        {
-            res.status(200).json({
-                product : doc
-            })
-        }
-        else
-        {
-            res.status(404).json({
-                message : "Product not found"
-            })
-        }
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error : err
+    .then((doc) => {
+      console.log(doc);
+      if (doc) {
+        res.status(200).json({
+          product: doc,
         });
+      } else {
+        res.status(404).json({
+          message: "Product not found",
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
     });
 });
 
 // Adding a product
-router.post('/', (req,res, next)=>{
-    const product = new Product({
-        _id : new mongoose.Types.ObjectId(),
-        name: req.body.name,
-        price : req.body.price,
-        userId : req.body.userId,
-        userType : req.body.userType,
-        category : req.body.category,
-        quantity : req.body.quantity,
-        date : req.body.date
-    });
+router.post("/", (req, res, next) => {
+  const product = new Product({
+    _id: new mongoose.Types.ObjectId(),
+    name: req.body.name,
+    price: req.body.price,
+    userId: req.body.userId,
+    userType: req.body.userType,
+    category: req.body.category,
+    quantity: req.body.quantity,
+    date: req.body.date,
+  });
 
-    product.save()
-    .then(result => {
-        console.log(result);
-        res.status(200).json({
-            message : "User details saved successfully",
-            userDetails : {
-                name : result.name,
-                price : result.price,
-                _id: result._id,
-                userId : result.userId,
-                category : result.category
-            }
-        })
+  product
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({
+        message: "User details saved successfully",
+        userDetails: {
+          name: result.name,
+          price: result.price,
+          _id: result._id,
+          userId: result.userId,
+          category: result.category,
+        },
+      });
     })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error : err
-        })
-    });        
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
 });
 
 module.exports = router;
