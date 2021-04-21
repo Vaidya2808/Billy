@@ -72,14 +72,14 @@ router.get("/", (req, res, next) => {
 });
 
 // Storing the user info in the Database
-router.post("/", upload.single("userImage"), (req, res, next) => {
+router.post("/", (req, res, next) => {
   console.log(req.file);
   const user = new User({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     phone: req.body.phone,
     userType: req.body.userType,
-    userImage : req.file.path
+    
   });
 
   user

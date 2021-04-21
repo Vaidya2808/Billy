@@ -16,9 +16,9 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  userImage : {
-    type : String
-  }
+  // userImage : {
+  //   type : String
+  // }
   // location: {
   //   type: {
   //     type: String, // Don't do `{ location: { type: String } }`
