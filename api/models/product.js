@@ -10,6 +10,7 @@ const productSchema = mongoose.Schema({
         type : Number,
         required : true
     },
+    productImage : {type : String},
     userId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
@@ -29,7 +30,7 @@ const productSchema = mongoose.Schema({
         default : 1,
     },
     date : {
-        type : String,
+        type : Date,
         default : ""
     }
 

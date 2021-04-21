@@ -5,7 +5,12 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const morgan = require('morgan');// logger middleware
-app.use(morgan('dev'));
+
+//--- 
+// app.use('/uploads', express.static('uploads'));
+//---
+
+    app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extendeed: false}));
 app.use(bodyParser.json());  
 
@@ -15,6 +20,8 @@ mongoose.connect('mongodb+srv://Abhimanyu:'+ process.env.MONGO_ATLAS_PW +'@clust
 });
 
 mongoose.Promise = global.Promise;
+
+// app.use("/uploads", express.static("uploads"));
 
 const userRoute = require('./api/routes/user');
 const productRoutes = require('./api/routes/product');

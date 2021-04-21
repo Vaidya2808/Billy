@@ -1,14 +1,38 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
+  },
+});
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+});
 
 const Product = require("../models/product");
-const User = require("../models/user");
 
 // Get all products sold by retailers
 router.get("/retailer", (req, res, next) => {
   Product.find({
-      userType : "retailer"
+    userType: "retailer",
   })
     .exec()
     .then((docs) => {
@@ -24,6 +48,7 @@ router.get("/retailer", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
+              productImage: doc.productImage,
               _id: doc._id,
               userId: doc.userId,
               userType: doc.userType,
@@ -47,7 +72,7 @@ router.get("/retailer", (req, res, next) => {
 // Get all products sold by retailers
 router.get("/wholesaler", (req, res, next) => {
   Product.find({
-      userType : "wholesaler"
+    userType: "wholesaler",
   })
     .exec()
     .then((docs) => {
@@ -63,6 +88,7 @@ router.get("/wholesaler", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
+              productImage: doc.productImage,
               _id: doc._id,
               userId: doc.userId,
               userType: doc.userType,
@@ -104,6 +130,7 @@ router.get("/retailer/category/:cat", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
+              productImage: doc.productImage,
               _id: doc._id,
               userId: doc._id,
               quantity: doc._id,
@@ -144,9 +171,10 @@ router.get("/wholesaler/category/:cat", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
+              productImage: doc.productImage,
               _id: doc._id,
-              userId: doc._id,
-              quantity: doc._id,
+              userId: doc.userId,
+              quantity: doc.quantity,
               date: doc.date,
             };
           }),
@@ -183,6 +211,7 @@ router.get("/ofShop/:shopId", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
+              productImage: doc.productImage,
               _id: doc._id,
               quantity: doc.quantity,
               date: doc.date,
@@ -228,11 +257,13 @@ router.get("/:id", (req, res, next) => {
 });
 
 // Adding a product
-router.post("/", (req, res, next) => {
+router.post("/", upload.single("productImage"), (req, res, next) => {
+  console.log(req.file);
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     price: req.body.price,
+    productImage: req.file.path,
     userId: req.body.userId,
     userType: req.body.userType,
     category: req.body.category,
@@ -253,6 +284,46 @@ router.post("/", (req, res, next) => {
           userId: result.userId,
           category: result.category,
         },
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
+
+// Updating the product details
+router.patch("/:productId", (req, res, next) => {
+  const id = req.params.productId;
+  const updateOps = {};
+  for (const ops of req.body) {
+    updateOps[ops.propName] = ops.value;
+  }
+  Product.update({ _id: id }, { $set: updateOps })
+    .exec()
+    .then((result) => {
+      res.status(200).json({
+        message: "Product updated",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
+
+// Deleting a Product
+router.delete("/:productId", (req, res, next) => {
+  const id = req.params.productId;
+  Product.remove({ _id: id })
+    .exec()
+    .then((result) => {
+      res.status(200).json({
+        message: "Product deleted",
       });
     })
     .catch((err) => {

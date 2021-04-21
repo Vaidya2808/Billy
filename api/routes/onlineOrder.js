@@ -125,4 +125,49 @@ router.post("/", (req, res, next) => {
     });
 });
 
+// Updating an Order
+router.patch("/:orderId", (req, res, next) => {
+  const id = req.params.orderId;
+  const updateOps = {};
+  for (const ops of req.body) {
+    updateOps[ops.propName] = ops.value;
+  }
+  onlineOrder.update({ _id: id }, { $set: updateOps })
+    .exec()
+    .then((result) => {
+      res.status(200).json({
+        message: "Order updated",
+        request: {
+          type: "GET",
+          url: "http://localhost:3000/products/" + id,
+        },
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
+
+// Deleting an Order
+router.delete("/:orderId", (req, res, next) => {
+  const id = req.params.orderId;
+    onlineOrder.remove({ _id: id })
+    .exec()
+    .then((result) => {
+      res.status(200).json({
+        message: "Order removed",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
+
+
 module.exports = router;
