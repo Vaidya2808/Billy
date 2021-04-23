@@ -29,6 +29,9 @@ const upload = multer({
 
 const Product = require("../models/product");
 
+// --------------------------------------
+
+// --------------------------------------
 // Get all products sold by retailers
 router.get("/retailer", (req, res, next) => {
   Product.find({
@@ -53,7 +56,6 @@ router.get("/retailer", (req, res, next) => {
               userType: doc.userType,
               category: doc.category,
               quantity: doc.quantity,
-              date: doc.date,
             };
           }),
         };
@@ -92,7 +94,6 @@ router.get("/wholesaler", (req, res, next) => {
               userType: doc.userType,
               category: doc.category,
               quantity: doc.quantity,
-              date: doc.date,
             };
           }),
         };
@@ -131,7 +132,7 @@ router.get("/retailer/category/:cat", (req, res, next) => {
               _id: doc._id,
               userName : doc.userName,
               quantity: doc.quantity,
-              date: doc.date,
+
             };
           }),
         };
@@ -171,7 +172,6 @@ router.get("/wholesaler/category/:cat", (req, res, next) => {
               _id: doc._id,
               userName: doc.userName,
               quantity: doc.quantity,
-              date: doc.date,
             };
           }),
         };
@@ -210,7 +210,6 @@ router.get("/ofShop/:shopName", (req, res, next) => {
               _id: doc._id,
               category : doc.category,
               quantity: doc.quantity,
-              date: doc.date,
             };
           }),
         };
@@ -263,7 +262,6 @@ router.post("/",  (req, res, next) => {
     userType: req.body.userType,
     category: req.body.category,
     quantity: req.body.quantity,
-    date: req.body.date,
   });
 
   product
@@ -278,7 +276,6 @@ router.post("/",  (req, res, next) => {
           _id: result._id,
           userName: result.userName,
           category: result.category,
-          date : result.date
         },
       });
     })

@@ -28,11 +28,8 @@ const productSchema = mongoose.Schema({
         type : Number ,
         required : true,
         default : 1,
-    },
-    date : {
-        type : Date,
-        default : ""
     }
+    
 
 });
 
