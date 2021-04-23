@@ -16,6 +16,10 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  wallet : {
+    type : Number,
+    default : 500
+  }
   // userImage : {
   //   type : String
   // }

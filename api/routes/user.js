@@ -4,36 +4,36 @@ const mongoose = require("mongoose");
 
 const User = require("../models/user");
 const Product = require("../models/product");
-const path = require("path");
+// const path = require("path");
 
-const multer = require("multer");
-// const upload = multer({dest : 'uploads/'})
-const fs = require("fs");
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
-  },
-});
+// const multer = require("multer");
+// // const upload = multer({dest : 'uploads/'})
+// const fs = require("fs");
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "uploads/");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
+//   },
+// });
 
-const fileFilter = (req, file, cb) => {
-  // reject a file
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
+// const fileFilter = (req, file, cb) => {
+//   // reject a file
+//   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+//     cb(null, true);
+//   } else {
+//     cb(null, false);
+//   }
+// };
 
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 5,
-  },
-  fileFilter: fileFilter,
-});
+// const upload = multer({
+//   storage: storage,
+//   limits: {
+//     fileSize: 1024 * 1024 * 5,
+//   },
+//   fileFilter: fileFilter,
+// });
 
 // getting a list of all the users
 router.get("/", (req, res, next) => {
@@ -50,8 +50,10 @@ router.get("/", (req, res, next) => {
             name: doc.name,
             phone: doc.phone,
             userType: doc.userType,
-            userImage: doc.userImage,
+            //userImage: doc.userImage,
+            wallet : doc.wallet,
             _id: doc._id,
+            
           };
         }),
       };
@@ -79,7 +81,7 @@ router.post("/", (req, res, next) => {
     name: req.body.name,
     phone: req.body.phone,
     userType: req.body.userType,
-    
+    wallet : req.body.wallet
   });
 
   user
@@ -92,7 +94,8 @@ router.post("/", (req, res, next) => {
           name: result.name,
           userType: result.userType,
           phone: result.phone,
-          userImage : result.userImage,
+          wallet : result.wallet,
+          //userImage : result.userImage,
           _id: result._id,
         },
       });
@@ -125,7 +128,8 @@ router.get("/retailer", (req, res, next) => {
             return {
               name: doc.name,
               phone: doc.phone,
-              userImage: doc.userImage,
+              //userImage: doc.userImage,
+              wallet : doc.wallet,
               _id: doc._id,
             };
           }),
@@ -160,7 +164,8 @@ router.get("/wholesaler", (req, res, next) => {
             return {
               name: doc.name,
               phone: doc.phone,
-              userImage: doc.userImage,
+              //userImage: doc.userImage,
+              wallet : doc.wallet,
               _id: doc._id,
             };
           }),
@@ -176,7 +181,7 @@ router.get("/wholesaler", (req, res, next) => {
     });
 });
 
-router.get("/:Id", (req, res, next) => {
+router.get("/:name", (req, res, next) => {
   const id = req.params.Id;
   Product.find({
     userId: id,
@@ -197,7 +202,7 @@ router.get("/:Id", (req, res, next) => {
               name: doc.name,
               price: doc.price,
               _id: doc._id,
-              productImage: doc.productImage,
+              //productImage: doc.productImage,
               category: doc.category,
               quantity: doc.quantity,
               date: doc.date,
@@ -286,5 +291,6 @@ router.delete("/:userId", (req, res, next) => {
       });
     });
 });
+
 
 module.exports = router;

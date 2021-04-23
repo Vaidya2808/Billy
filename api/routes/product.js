@@ -48,9 +48,8 @@ router.get("/retailer", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
-              productImage: doc.productImage,
               _id: doc._id,
-              userId: doc.userId,
+              userName: doc.userName,
               userType: doc.userType,
               category: doc.category,
               quantity: doc.quantity,
@@ -88,9 +87,8 @@ router.get("/wholesaler", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
-              productImage: doc.productImage,
               _id: doc._id,
-              userId: doc.userId,
+              userName: doc.userName,
               userType: doc.userType,
               category: doc.category,
               quantity: doc.quantity,
@@ -130,10 +128,9 @@ router.get("/retailer/category/:cat", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
-              productImage: doc.productImage,
               _id: doc._id,
-              userId: doc._id,
-              quantity: doc._id,
+              userName : doc.userName,
+              quantity: doc.quantity,
               date: doc.date,
             };
           }),
@@ -171,9 +168,8 @@ router.get("/wholesaler/category/:cat", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
-              productImage: doc.productImage,
               _id: doc._id,
-              userId: doc.userId,
+              userName: doc.userName,
               quantity: doc.quantity,
               date: doc.date,
             };
@@ -192,10 +188,10 @@ router.get("/wholesaler/category/:cat", (req, res, next) => {
 });
 
 // Products sold by a particular shop
-router.get("/ofShop/:shopId", (req, res, next) => {
-  const Id = req.params.shopId;
+router.get("/ofShop/:shopName", (req, res, next) => {
+  const name = req.params.shopName;
   Product.find({
-    userId: Id,
+    userName: name,
   })
     .exec()
     .then((docs) => {
@@ -211,8 +207,8 @@ router.get("/ofShop/:shopId", (req, res, next) => {
             return {
               name: doc.name,
               price: doc.price,
-              productImage: doc.productImage,
               _id: doc._id,
+              category : doc.category,
               quantity: doc.quantity,
               date: doc.date,
             };
@@ -257,14 +253,13 @@ router.get("/:id", (req, res, next) => {
 });
 
 // Adding a product
-router.post("/", upload.single("productImage"), (req, res, next) => {
-  console.log(req.file);
+router.post("/",  (req, res, next) => {
+  
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     price: req.body.price,
-    productImage: req.file.path,
-    userId: req.body.userId,
+    userName: req.body.userName,
     userType: req.body.userType,
     category: req.body.category,
     quantity: req.body.quantity,
@@ -281,8 +276,9 @@ router.post("/", upload.single("productImage"), (req, res, next) => {
           name: result.name,
           price: result.price,
           _id: result._id,
-          userId: result.userId,
+          userName: result.userName,
           category: result.category,
+          date : result.date
         },
       });
     })
