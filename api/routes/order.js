@@ -73,13 +73,30 @@ router.get("/boughtBy/:user", (req, res, next) => {
     boughtBy: req.params.user,
   })
     .exec()
-    .then((order) => {
-      if (!order) {
-        return res.status(404).json({
-          message: "No Order",
+    .then((docs) => {
+      console.log(docs);
+      if (docs.length == 0) {
+        res.status(200).json({
+          message: "No user found",
         });
+      } else {
+        const response = {
+          count: docs.length,
+          order: docs.map((doc) => {
+            return {
+              product: doc.product,
+              productId: doc.productId,
+              soldBy: doc.soldBy,
+              quantity: doc.quantity,
+              status: doc.status,
+              deliveryPerson: doc.deliveryPerson,
+              phone: doc.phone,
+              _id: doc._id,
+            };
+          }),
+        };
+        res.status(200).json(response);
       }
-      res.status(200).json(order);
     })
     .catch((err) => {
       res.status(500).json({
@@ -94,13 +111,30 @@ router.get("/soldBy/:user", (req, res, next) => {
     soldBy: req.params.user,
   })
     .exec()
-    .then((order) => {
-      if (!order) {
-        return res.status(404).json({
-          message: "No Order",
+    .then((docs) => {
+      console.log(docs);
+      if (docs.length == 0) {
+        res.status(200).json({
+          message: "No user found",
         });
+      } else {
+        const response = {
+          count: docs.length,
+          order: docs.map((doc) => {
+            return {
+              product: doc.product,
+              productId: doc.productId,
+              boughtBy: doc.boughtBy,
+              quantity: doc.quantity,
+              status: doc.status,
+              deliveryPerson: doc.deliveryPerson,
+              phone: doc.phone,
+              _id: doc._id,
+            };
+          }),
+        };
+        res.status(200).json(response);
       }
-      res.status(200).json(order)
     })
     .catch((err) => {
       res.status(500).json({
