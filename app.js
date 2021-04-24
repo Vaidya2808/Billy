@@ -26,11 +26,12 @@ mongoose.Promise = global.Promise;
 const userRoute = require('./api/routes/user');
 const productRoutes = require('./api/routes/product');
 const orderRoute = require('./api/routes/order');
+const feedbackRoute = require('./api/routes/feedback');
 
 app.use('/user', userRoute);
 app.use('/products', productRoutes); 
 app.use('/order', orderRoute);
-
+app.use('/feedback', feedbackRoute);
 
 app.get('*' , (req, res, next) => {
     res.send({
